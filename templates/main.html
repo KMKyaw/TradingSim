@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Main Page</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Main Page</h1>
+        <p>Welcome, {{ current_user.username }}!</p>
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+      </header>
+
+      <div class="row">
+        <div class="col">
+          <h2>File Upload</h2>
+          <div class="upload-area" id="upload-area">
+            <span id="upload-message"
+              >Drag and drop your python file or click to upload</span
+            >
+            <div class="file-name" id="file-name"></div>
+          </div>
+          <form
+            id="file-upload-form"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <input
+              type="file"
+              id="file-input"
+              name="file"
+              style="display: none"
+              accept=".py"
+            />
+            <button type="button" id="submit-button" class="btn">
+              Submit File
+            </button>
+          </form>
+        </div>
+
+        <div class="col documentation">
+          <h2>Documentation</h2>
+          <h3>Getting Started</h3>
+          <p>
+            Welcome to the documentation section. Here you'll find all the
+            necessary information to get started.
+          </p>
+
+          <h3>File Upload</h3>
+          <p>
+            You can drag and drop files into the upload area or click to select
+            files manually.
+          </p>
+
+          <h3>Submission Format</h3>
+          <p>
+            In order to have a successful file submission, you need to provide
+            your algorithm inside the <b>myStrategy()</b> function.
+          </p>
+
+          <!-- Non-editable text field -->
+          <div class="non-editable-field">
+            <label for="info-text">Example.py for sample submission:</label>
+            <pre id="info-code">
+def myStrategy():
+  if self.position.size == 0:
+    self.place_order(price=self.dataclose[0], size=5, 
+    order_type='market', action='buy')
+  else:
+    self.place_order(price=self.dataclose[0], size=5, 
+    order_type='market', action='sell')
+</pre
+            >
+          </div>
+          <h3>Available functions</h3>
+          <p>You must use the following functions to perform trades</p>
+          <p><b>self.place_order(price, size, order_type, action)</b></p>
+          <ul>
+            <li>price : float</li>
+            <li>size : int</li>
+            <li>order_type : type of order (limit, market, stop)</li>
+            <li>action : type of action (buy,sell)</li>
+          </ul>
+          <p><b>self.cancel_order(order_id)</b></p>
+          <ul>
+            <li>order_id : int</li>
+          </ul>
+          <p><b>self.get_cash()</b></p>
+          <ul>
+            <li>Returns current cash amount</li>
+          </ul>
+          <p><b>self.get_all_orders()</b></p>
+          <ul>
+            <li>Returns all orders</li>
+          </ul>
+          <p><b>self.get_account_info()</b></p>
+          <ul>
+            <li>Returns current cash balance, portfolio value, positions</li>
+          </ul>
+          <h3>Available variables</h3>
+          <p><b>self.position.size</b> is the amount of your current asset</p>
+          <p>
+            <b>self.dataclose[i]</b>, where i = 0 means the latest line from bar
+            data
+          </p>
+          <p><b>placeholder</b></p>
+          <p><b>placeholder</b></p>
+          <p><b>placeholder</b></p>
+        </div>
+      </div>
+
+      {% if output %}
+      <div class="output-area">
+        <h2>Result</h2>
+        <pre>{{ output }}</pre>
+      </div>
+      {% endif %}
+    </div>
+
+    <script>
+      const uploadArea = document.getElementById("upload-area");
+      const fileInput = document.getElementById("file-input");
+      const fileNameDisplay = document.getElementById("file-name");
+      const fileUploadForm = document.getElementById("file-upload-form");
+      const submitButton = document.getElementById("submit-button");
+      const uploadMessage = document.getElementById("upload-message");
+
+      uploadArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        uploadArea.classList.add("hover");
+      });
+
+      uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("hover");
+      });
+
+      uploadArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        uploadArea.classList.remove("hover");
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+          fileInput.files = files;
+          fileNameDisplay.textContent = files[0].name;
+          uploadMessage.style.display = "none"; // Hide the default message
+        }
+      });
+
+      uploadArea.addEventListener("click", () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener("change", () => {
+        if (fileInput.files.length > 0) {
+          fileNameDisplay.textContent = fileInput.files[0].name;
+          uploadMessage.style.display = "none"; // Hide the default message
+        }
+      });
+
+      submitButton.addEventListener("click", () => {
+        if (fileInput.files.length > 0) {
+          fileUploadForm.submit();
+        } else {
+          alert("Please select a file before submitting.");
+        }
+      });
+    </script>
+  </body>
+</html>
